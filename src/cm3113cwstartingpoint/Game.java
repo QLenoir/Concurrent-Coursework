@@ -59,15 +59,19 @@ public class Game {
     
     /* processes a donation that comes from a Viewer */
     public void processDonation(Donation donation){
-        totalDonationsRecordedByGame += donation.getAmount();
-        donations.add(donation);
-        donation.getPlayer().addDonation(donation);
+        synchronized(this){
+            totalDonationsRecordedByGame += donation.getAmount();
+            donations.add(donation);
+            donation.getPlayer().addDonation(donation);
+        }
     }
     
     /* processes a record of time spent viewing a Player that comes from a Viewer */
     public void recordViewingTime(Player p, long time){
-        totalViewingTimeRecordedByGame += time;
-        times.get(p).add(time);       
+        synchronized(this){
+            totalViewingTimeRecordedByGame += time;
+            times.get(p).add(time);       
+        }
     }
        
     /* Basic methods for accessing Game properties */
@@ -82,7 +86,9 @@ public class Game {
     }
     
     public ArrayList<Viewer> getViewers() {
-        return viewers;
+        synchronized(this){
+            return viewers;
+        }
     }
        
     public boolean isRunning() {
@@ -98,33 +104,48 @@ public class Game {
     }
 
     public ArrayList<Donation> getDonations() {
-        return donations;
+        synchronized(this){
+            return donations;
+        }
+        
     }
 
     public double getTotalDonationsRecordedByGame() {
-        return totalDonationsRecordedByGame;
+        synchronized(this){
+            return totalDonationsRecordedByGame;
+        }
     }
 
     public long getTotalViewingTimeRecordedByGame() {
-        return totalViewingTimeRecordedByGame;
+        synchronized(this){
+            return totalViewingTimeRecordedByGame;
+        }
     }
     
     public HashMap<Player, ArrayList<Long>> getTimes() {
-        return times;
+        synchronized(this){
+            return times;
+        }
     }
 
     public int getTotalNumberViewing() {
-        return totalNumberViewing;
+        synchronized(this){
+            return totalNumberViewing;
+        }
     }
 
     public void viewerJoins(Viewer v) {
-        totalNumberViewing++;
-        viewers.add(v);
+        synchronized(this){
+            totalNumberViewing++;
+            viewers.add(v);
+        }
     }
     
     public void viewerLeaves(Viewer v) {
-        totalNumberViewing--;
-        viewers.remove(v);
+        synchronized(this){
+            totalNumberViewing--;
+            viewers.remove(v);
+        }
     }
     
     /* Method that checks for consistency of viewing time data 

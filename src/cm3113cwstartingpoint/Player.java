@@ -30,35 +30,45 @@ public class Player{
     
     /* methods for updating and accessing number of current viewers */
     public void gainOneViewer(){
-        numViewers++;
+        synchronized(this){
+            numViewers++;
+        }
     }
     public void loseOneViewer(){
-        numViewers--;
+        synchronized(this){
+            numViewers--;
+        }
     }
     public int getNumViewers() {
-        return numViewers;
+        synchronized(this){
+            return numViewers;
+        }
     }
         
     /* method for processing donation from a Viewer into Player records */
     public void addDonation(Donation donation){
-        this.numOfDonations++;
-        this.sumOfDonations += donation.getAmount();
-        Viewer donor = donation.getViewer();
-        if(donationsFromViewers.containsKey(donor)){
-            donationsFromViewers.replace(donor, donationsFromViewers.get(donor) + donation.getAmount());
-        }
-        else{
-            donationsFromViewers.put(donor, donation.getAmount());
+        synchronized(this){
+            this.numOfDonations++;
+            this.sumOfDonations += donation.getAmount();
+            Viewer donor = donation.getViewer();
+            if(donationsFromViewers.containsKey(donor)){
+                donationsFromViewers.replace(donor, donationsFromViewers.get(donor) + donation.getAmount());
+            }
+            else{
+                donationsFromViewers.put(donor, donation.getAmount());
+            }
         }
     }
     
     /* method to get total of all donations in Players record of donations */
     public double sumDonations(){
+        synchronized(this){
         int sum = 0;
         for(Double v: donationsFromViewers.values()){
             sum += v;
         }
         return sum;
+        }
     }
     
     @Override public String toString(){
@@ -72,15 +82,21 @@ public class Player{
     
     /* method to return reference to HashMap of donation records made to this Player */
     public HashMap<Viewer, Double> getDonationsFromViewers() {
-        return donationsFromViewers;
+        synchronized(this){
+            return donationsFromViewers;
+        }
     }
 
     /* methods to access running totals of number and values of donations */
     public int getNumOfDonations() {
-        return numOfDonations;
+        synchronized(this){
+            return numOfDonations;
+        }
     }
     public Double getSumOfDonations() {
-        return sumOfDonations;
+        synchronized(this){
+            return sumOfDonations;
+        }
     }
     
     // class-level methods to access and increase grand total of all viewing time  for all Players */
