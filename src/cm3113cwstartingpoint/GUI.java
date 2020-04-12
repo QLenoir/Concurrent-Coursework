@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 
 /**
@@ -24,7 +25,7 @@ public class GUI extends javax.swing.JFrame {
 
     /* uses data in Players list from Game to fill JTable on the GUI */
     public void fillTable() {
-        ArrayList<Player> players = game.getPlayers();
+        List<Player> players = game.getPlayers();
         Object[][] tableData = new Object[players.size() + 1][4];
         int totalViewers = 0, totalNumDonations = 0, row = 0;
         double totalValDonations = 0.0;

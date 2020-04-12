@@ -2,9 +2,12 @@ package cm3113cwstartingpoint;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Game class stores lists of Players, Viewers, Donations and viewing times
@@ -12,10 +15,10 @@ import java.util.Random;
  */
 public class Game {
     /* Collections stored within Game object */
-    private ArrayList<Player> players;
-    private ArrayList<Viewer> viewers;
-    private ArrayList<Donation> donations;
-    private HashMap<Player,ArrayList<Long>> times;
+    private List<Player> players;
+    private List<Viewer> viewers;
+    private List<Donation> donations;
+    private ConcurrentHashMap<Player,ArrayList<Long>> times;
     DecimalFormat round = new DecimalFormat("0.00");
     
     /* Properties of the Game */
@@ -32,10 +35,10 @@ public class Game {
     public Game(GUI gui, String name){
         this.gui = gui;
         this.name =name;
-        this.players = new ArrayList();
-        this.viewers = new ArrayList();
-        this.donations = new ArrayList();
-        this.times = new HashMap();
+        this.players = Collections.synchronizedList(new ArrayList());
+        this.viewers = Collections.synchronizedList(new ArrayList());
+        this.donations = Collections.synchronizedList(new ArrayList());
+        this.times = new ConcurrentHashMap();
         this.totalDonationsRecordedByGame = 0;
         this.random = new Random();
         initialise();
@@ -75,7 +78,7 @@ public class Game {
     }
        
     /* Basic methods for accessing Game properties */
-    public ArrayList<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
     
@@ -85,7 +88,7 @@ public class Game {
         return names;
     }
     
-    public ArrayList<Viewer> getViewers() {
+    public List<Viewer> getViewers() {
         synchronized(this){
             return viewers;
         }
@@ -103,7 +106,7 @@ public class Game {
         this.running = true;
     }
 
-    public ArrayList<Donation> getDonations() {
+    public List<Donation> getDonations() {
         synchronized(this){
             return donations;
         }
@@ -122,7 +125,7 @@ public class Game {
         }
     }
     
-    public HashMap<Player, ArrayList<Long>> getTimes() {
+    public ConcurrentHashMap<Player, ArrayList<Long>> getTimes() {
         synchronized(this){
             return times;
         }
