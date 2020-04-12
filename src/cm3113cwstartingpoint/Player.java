@@ -1,6 +1,7 @@
 package cm3113cwstartingpoint;
 
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Player object stores player name, number of active viewers, 
@@ -16,7 +17,7 @@ public class Player{
     private int numOfDonations;         /* running total number of donations */
     private double sumOfDonations;      /* running total of value of donations */
     
-    private HashMap<Viewer, Double> donationsFromViewers; /* record of donations */
+    private ConcurrentHashMap<Viewer, Double> donationsFromViewers; /* record of donations */
     
     private static long allTime;    /* class-level running total of all viewing times */
 
@@ -24,7 +25,7 @@ public class Player{
     public Player(String name) {
         this.playerName = name;
         this.numViewers = 0;
-        donationsFromViewers = new HashMap();
+        donationsFromViewers = new ConcurrentHashMap();
         sumOfDonations = 0;
     }
     
@@ -63,11 +64,11 @@ public class Player{
     /* method to get total of all donations in Players record of donations */
     public double sumDonations(){
         synchronized(this){
-        int sum = 0;
-        for(Double v: donationsFromViewers.values()){
-            sum += v;
-        }
-        return sum;
+            int sum = 0;
+            for(Double v: donationsFromViewers.values()){
+                sum += v;
+            }
+            return sum;
         }
     }
     
@@ -81,7 +82,7 @@ public class Player{
     }
     
     /* method to return reference to HashMap of donation records made to this Player */
-    public HashMap<Viewer, Double> getDonationsFromViewers() {
+    public ConcurrentHashMap<Viewer, Double> getDonationsFromViewers() {
         synchronized(this){
             return donationsFromViewers;
         }

@@ -3,12 +3,15 @@ package cm3113cwstartingpoint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JTextField;
 
 /**
- * Designed with aid if Netbeans GUI builder 
+ * Designed with aid if NetBeans GUI builder 
  * @author DAVID
  */
 public class GUI extends javax.swing.JFrame {
@@ -21,8 +24,33 @@ public class GUI extends javax.swing.JFrame {
         initComponents();
         this.game = new Game(this, "Test Game");
         this.jComboBox1.setModel(new DefaultComboBoxModel(game.getPlayersNames().toArray()));
+        
+        this.createClockTimer();
     }
 
+    private void createClockTimer() {
+        java.util.Timer timer = new java.util.Timer(true); // the Timer
+        java.util.TimerTask task = new java.util.TimerTask(){ // the Task
+            @Override public void run(){
+                // clock3.setText(getTime());
+                /* not guaranteed thread-safe as
+                * it's updating GUI from the separate TimerTask Thread */
+
+                java.awt.EventQueue.invokeLater(
+                        new Runnable() {
+                            @Override public void run() {
+                                getTextFieldTime().setText(getTime());
+                            }}); // this is thread-safe as sets clock via the EDT
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0,1000);
+    }
+
+    public String getTime() {
+        LocalDateTime now = LocalDateTime.now();
+        return now.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+    }
+    
     /* uses data in Players list from Game to fill JTable on the GUI */
     public void fillTable() {
         List<Player> players = game.getPlayers();
@@ -64,6 +92,10 @@ public class GUI extends javax.swing.JFrame {
         this.textAreaResults.append("" + str);
     }
 
+    public JTextField getTextFieldTime(){
+        return this.textFieldTime;
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
