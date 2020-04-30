@@ -1,12 +1,14 @@
 package cm3113cwstartingpoint;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTextField;
 
@@ -18,13 +20,16 @@ public class GUI extends javax.swing.JFrame {
 
     private Game game;
     private Viewer testViewer;
+    private Executor viewerPool;
     DecimalFormat round = new DecimalFormat("0.00");
+    private final static int MAX_VIEWER = 30;
     
     public GUI() {
         initComponents();
         this.game = new Game(this, "Test Game");
         this.jComboBox1.setModel(new DefaultComboBoxModel(game.getPlayersNames().toArray()));
         
+        this.viewerPool = Executors.newFixedThreadPool(MAX_VIEWER);
         this.createClockTimer();
     }
 
@@ -32,9 +37,6 @@ public class GUI extends javax.swing.JFrame {
         java.util.Timer timer = new java.util.Timer(true); // the Timer
         java.util.TimerTask task = new java.util.TimerTask(){ // the Task
             @Override public void run(){
-                // clock3.setText(getTime());
-                /* not guaranteed thread-safe as
-                * it's updating GUI from the separate TimerTask Thread */
 
                 java.awt.EventQueue.invokeLater(
                         new Runnable() {
@@ -45,6 +47,26 @@ public class GUI extends javax.swing.JFrame {
         };
         timer.scheduleAtFixedRate(task, 0,1000);
     }
+    
+    private void startGameTimer() {
+        java.util.Timer timer = new java.util.Timer(true); // the Timer
+        long start = System.currentTimeMillis();
+        DateFormat simple = new SimpleDateFormat("mm:ss"); 
+        java.util.TimerTask task = new java.util.TimerTask(){ // the Task
+            @Override public void run(){
+                    Date result = new Date(System.currentTimeMillis() - start); 
+                    java.awt.EventQueue.invokeLater(
+                        new Runnable() {
+                            @Override public void run() {  
+                                if(game.isRunning()){    
+                                getTextFieldGameRunningTime().setText(simple.format(result));
+                                }else{
+                                    cancel();
+                                }
+                            }}); // this is thread-safe as sets clock via the EDT
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0,1000);    }
 
     public String getTime() {
         LocalDateTime now = LocalDateTime.now();
@@ -94,6 +116,10 @@ public class GUI extends javax.swing.JFrame {
 
     public JTextField getTextFieldTime(){
         return this.textFieldTime;
+    }
+    
+    public JTextField getTextFieldGameRunningTime(){
+        return this.textFieldGameRunningTime;
     }
     
     /**
@@ -540,7 +566,7 @@ public class GUI extends javax.swing.JFrame {
         int viewerActionInterval = (Integer) this.spinnerViewerRate.getValue();
         testViewer = new Viewer("Test" , game, 1, viewerActionInterval);
         this.buttonMakeDonation.setEnabled(true);
-        testViewer.start();
+        viewerPool.execute(testViewer);
     }//GEN-LAST:event_buttonStartOneViewerActionPerformed
 
     private void buttonMakeDonationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMakeDonationActionPerformed
@@ -569,7 +595,7 @@ public class GUI extends javax.swing.JFrame {
                 int numViewerActions = (Integer) this.spinnerViewerActions.getValue();
                 v = new Viewer("V" + i, game, numViewerActions, viewerActionInterval);
             }           
-            v.start();
+            viewerPool.execute(v);
             fillTable();
         }
     }//GEN-LAST:event_buttonStartViewersActionPerformed
@@ -578,6 +604,7 @@ public class GUI extends javax.swing.JFrame {
         game.startGame();
         this.buttonStartOneViewer.setEnabled(true);
         this.buttonStartViewers.setEnabled(true);
+        this.startGameTimer();
         fillTable();
     }//GEN-LAST:event_buttonStartGameActionPerformed
 
