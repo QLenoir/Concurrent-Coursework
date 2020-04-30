@@ -39,9 +39,9 @@ public class Game {
     private Condition bufferNotEmpty ; // condition variables
     private Condition bufferNotFull ;
     // shared data that Monitor protects
-    private Donation[] donationBuffer ;
-    private int bufferSize, in, out, numDonations ;
-    private final static int QUEUE_SIZE = 15;
+    private Updatable[] buffer ;
+    private int bufferSize, in, out, numUpdates ;
+    private final static int QUEUE_SIZE = 50;
     
     /* Game construtor */
     public Game(GUI gui, String name){
@@ -63,8 +63,8 @@ public class Game {
         bufferSize = QUEUE_SIZE; 
         in = 0; 
         out = 0; 
-        numDonations = 0;
-        donationBuffer = new Donation[bufferSize] ;
+        numUpdates = 0;
+        buffer = new Updatable[bufferSize] ;
         
         initialise();
     }
@@ -237,39 +237,40 @@ public class Game {
         gui.updateReport(report);
     }
     
-    public void addDonation(Donation d) {
+    public void add(Updatable u) {
         try {
             lock.lock() ;
-            while (numDonations == bufferSize)
+            while (numUpdates == bufferSize)
             try { bufferNotFull.await() ; }
             catch(InterruptedException e){}
-        donationBuffer[in] = d ;
+        buffer[in] = u ;
         in = (in + 1) % bufferSize;
-        numDonations++ ;
+        numUpdates++ ;
         bufferNotEmpty.signal() ;
         } finally {
         lock.unlock() ;
         }
     }
 
-    public Donation removeDonation() {
+    public Updatable remove() {
         try {
             lock.lock() ;
-            while (this.numDonations == 0)
+            while (this.numUpdates == 0)
         try { bufferNotEmpty.await() ; }
         catch(InterruptedException e){}
-            Donation d = donationBuffer[out] ;
+            Updatable u = buffer[out] ;
             out = (out + 1) % bufferSize;
-            numDonations--;
+            numUpdates--;
         bufferNotFull.signal() ;
-        return d ;
+        return u;
         } finally {
         lock.unlock() ;
         }
     }
     
-    public synchronized int getDonationQueueLength(){
-        return this.numDonations;
+    public synchronized int getQueueLength(){
+        return this.numUpdates;
     }
+    
     
 }
