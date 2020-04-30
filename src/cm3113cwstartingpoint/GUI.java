@@ -32,6 +32,7 @@ public class GUI extends javax.swing.JFrame {
         
         this.viewerPool = Executors.newFixedThreadPool(MAX_VIEWER);
         this.createClockTimer();
+        this.fillTableTask();
     }
 
     private void createClockTimer() {
@@ -72,6 +73,21 @@ public class GUI extends javax.swing.JFrame {
     public String getTime() {
         LocalDateTime now = LocalDateTime.now();
         return now.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
+    }
+    
+    private void fillTableTask() {
+        java.util.Timer timer = new java.util.Timer(true); // the Timer
+        java.util.TimerTask task = new java.util.TimerTask(){ // the Task
+            @Override public void run(){
+
+                java.awt.EventQueue.invokeLater(
+                        new Runnable() {
+                            @Override public void run() {
+                               fillTable();
+                            }}); // this is thread-safe as sets clock via the EDT
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0,1000);
     }
     
     /* uses data in Players list from Game to fill JTable on the GUI */
@@ -575,13 +591,11 @@ public class GUI extends javax.swing.JFrame {
         testViewer.switchPlayer(game.getPlayers().get(who));       
         double donationAmount = (Integer) this.spinnerDonation.getValue();
         testViewer.donate(donationAmount);
-        fillTable();
     }//GEN-LAST:event_buttonMakeDonationActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
         int who = this.jComboBox1.getSelectedIndex();
         testViewer.switchPlayer(game.getPlayers().get(who));
-        fillTable();
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void buttonStartViewersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartViewersActionPerformed
@@ -597,7 +611,6 @@ public class GUI extends javax.swing.JFrame {
                 v = new Viewer("V" + i, game, numViewerActions, viewerActionInterval);
             }           
             viewerPool.execute(v);
-            fillTable();
         }
     }//GEN-LAST:event_buttonStartViewersActionPerformed
 
@@ -608,7 +621,6 @@ public class GUI extends javax.swing.JFrame {
         this.startGameTimer();
         UpdateConsumer update = new UpdateConsumer(game);
         this.viewerPool.execute(update);
-        fillTable();
     }//GEN-LAST:event_buttonStartGameActionPerformed
 
     private void buttonStopGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStopGameActionPerformed
@@ -616,13 +628,11 @@ public class GUI extends javax.swing.JFrame {
         this.buttonStartOneViewer.setEnabled(false);
         this.buttonStartViewers.setEnabled(false);
         System.out.println("Game stopped. Number of viewers should reduce to 0");
-        fillTable();
     }//GEN-LAST:event_buttonStopGameActionPerformed
 
     private void buttonProcessResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonProcessResultsActionPerformed
         game.countTimes();
         game.checkDonations();
-        fillTable();
     }//GEN-LAST:event_buttonProcessResultsActionPerformed
 
     private void jCheckBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox1ActionPerformed
