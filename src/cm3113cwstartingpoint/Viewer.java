@@ -12,17 +12,18 @@ import java.util.Random;
 public class Viewer extends Thread{
     private final String id;            // id for viewer
     
-    private Game game;                  // reference to Game associated with Viewer
+    private final Game game;                  // reference to Game associated with Viewer
     private Player viewedPlayer;        // Player that Viwere is currently watching
     private long startedViewingPlayer;  // stores nanosecond level start of viewing time of current Player 
     
-    private Random random;              
-    private int numberActions;          // number of switches between Players that Viewer can make
-    private int intervalBetweenActions; // time in milliseconds between switches
+    private final Random random;              
+    private final int numberActions;          // number of switches between Players that Viewer can make
+    private final int intervalBetweenActions; // time in milliseconds between switches
     
     /* class-level data tracking totals for all Viewers */
     private static long totalViewingTimeRecordedByViewers;
     private volatile static ArrayList<Donation> donationsMade = new ArrayList();  
+   
     
     /* Viewer constructor */
     public Viewer(String id, Game f, int actions, int interval){
@@ -60,7 +61,7 @@ public class Viewer extends Thread{
     /* method to process a donation for a Player */
     public void donate(double amount){
         Donation donation = new Donation(this, viewedPlayer, amount);
-        this.game.processDonation(donation);
+        this.game.addDonation(donation);
         Viewer.donationsMade.add(donation);
     }
     

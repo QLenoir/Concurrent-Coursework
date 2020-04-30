@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Game class stores lists of Players, Viewers, Donations and viewing times
@@ -31,6 +34,15 @@ public class Game {
     private Random random;
     private GUI gui;
     
+    /* Update queue */
+    private Lock lock ; // monitor entry lock
+    private Condition bufferNotEmpty ; // condition variables
+    private Condition bufferNotFull ;
+    // shared data that Monitor protects
+    private Donation[] donationBuffer ;
+    private int bufferSize, in, out, numDonations ;
+    private final static int QUEUE_SIZE = 15;
+    
     /* Game construtor */
     public Game(GUI gui, String name){
         this.gui = gui;
@@ -41,6 +53,19 @@ public class Game {
         this.times = new ConcurrentHashMap();
         this.totalDonationsRecordedByGame = 0;
         this.random = new Random();
+        
+        
+        lock = new ReentrantLock(); // initialise the lock
+        /* initialise 2 condition variables associated with lock */
+        bufferNotEmpty = lock.newCondition() ;
+        bufferNotFull = lock.newCondition() ;
+        /* initialise buffer data*/
+        bufferSize = QUEUE_SIZE; 
+        in = 0; 
+        out = 0; 
+        numDonations = 0;
+        donationBuffer = new Donation[bufferSize] ;
+        
         initialise();
     }
     
@@ -210,6 +235,41 @@ public class Game {
         
         System.out.println(report);
         gui.updateReport(report);
+    }
+    
+    public void addDonation(Donation d) {
+        try {
+            lock.lock() ;
+            while (numDonations == bufferSize)
+            try { bufferNotFull.await() ; }
+            catch(InterruptedException e){}
+        donationBuffer[in] = d ;
+        in = (in + 1) % bufferSize;
+        numDonations++ ;
+        bufferNotEmpty.signal() ;
+        } finally {
+        lock.unlock() ;
+        }
+    }
+
+    public Donation removeDonation() {
+        try {
+            lock.lock() ;
+            while (this.numDonations == 0)
+        try { bufferNotEmpty.await() ; }
+        catch(InterruptedException e){}
+            Donation d = donationBuffer[out] ;
+            out = (out + 1) % bufferSize;
+            numDonations--;
+        bufferNotFull.signal() ;
+        return d ;
+        } finally {
+        lock.unlock() ;
+        }
+    }
+    
+    public synchronized int getDonationQueueLength(){
+        return this.numDonations;
     }
     
 }

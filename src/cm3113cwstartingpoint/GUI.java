@@ -23,9 +23,11 @@ public class GUI extends javax.swing.JFrame {
     private Executor viewerPool;
     DecimalFormat round = new DecimalFormat("0.00");
     private final static int MAX_VIEWER = 30;
+    private final static int QUEUE_SIZE = 30;
     
     public GUI() {
         initComponents();
+
         this.game = new Game(this, "Test Game");
         this.jComboBox1.setModel(new DefaultComboBoxModel(game.getPlayersNames().toArray()));
         
@@ -605,6 +607,8 @@ public class GUI extends javax.swing.JFrame {
         this.buttonStartOneViewer.setEnabled(true);
         this.buttonStartViewers.setEnabled(true);
         this.startGameTimer();
+        UpdateConsumer updates = new UpdateConsumer(game);
+        this.viewerPool.execute(updates);
         fillTable();
     }//GEN-LAST:event_buttonStartGameActionPerformed
 
