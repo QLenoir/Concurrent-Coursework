@@ -18,12 +18,11 @@ import javax.swing.JTextField;
  */
 public class GUI extends javax.swing.JFrame {
 
-    private Game game;
+    private final Game game;
     private Viewer testViewer;
-    private Executor viewerPool;
+    private final Executor viewerPool;
     DecimalFormat round = new DecimalFormat("0.00");
     private final static int MAX_VIEWER = 30;
-    private final static int QUEUE_SIZE = 30;
     
     public GUI() {
         initComponents();
@@ -607,8 +606,8 @@ public class GUI extends javax.swing.JFrame {
         this.buttonStartOneViewer.setEnabled(true);
         this.buttonStartViewers.setEnabled(true);
         this.startGameTimer();
-        UpdateConsumer updates = new UpdateConsumer(game);
-        this.viewerPool.execute(updates);
+        UpdateConsumer update = new UpdateConsumer(game);
+        this.viewerPool.execute(update);
         fillTable();
     }//GEN-LAST:event_buttonStartGameActionPerformed
 

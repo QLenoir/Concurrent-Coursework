@@ -19,9 +19,13 @@ public class UpdateConsumer extends Thread {
     
     @Override public void run(){
         while(game.isRunning()){
-            if(game.getDonationQueueLength()== 0) continue;
-            Donation d = game.removeDonation();
-            game.processDonation(d);
+            if(game.getQueueLength()== 0) continue;
+            Updatable u = game.remove();
+            if(u.isDonation()){
+               game.processDonation(u.getDonation());
+            } else {
+                game.recordViewingTime(u.getPlayer(), u.getTimeViewed());
+            }
             pauseFor(1);
         }
     }
