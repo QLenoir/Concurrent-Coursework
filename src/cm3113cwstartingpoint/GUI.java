@@ -87,7 +87,7 @@ public class GUI extends javax.swing.JFrame {
                             }}); // this is thread-safe as sets clock via the EDT
             }
         };
-        timer.scheduleAtFixedRate(task, 0,1000);
+        timer.scheduleAtFixedRate(task, 0,100);
     }
     
     /* uses data in Players list from Game to fill JTable on the GUI */

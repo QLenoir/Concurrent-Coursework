@@ -17,7 +17,7 @@ public class Player{
     private int numOfDonations;         /* running total number of donations */
     private double sumOfDonations;      /* running total of value of donations */
     
-    private ConcurrentHashMap<Viewer, Double> donationsFromViewers; /* record of donations */
+    private final ConcurrentHashMap<Viewer, Double> donationsFromViewers; /* record of donations */
     
     private static long allTime;    /* class-level running total of all viewing times */
 
