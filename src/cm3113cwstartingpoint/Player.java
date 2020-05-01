@@ -101,10 +101,10 @@ public class Player{
     }
     
     // class-level methods to access and increase grand total of all viewing time  for all Players */
-    public static long getAllTime() {
+    public static synchronized long getAllTime() {
         return allTime;
     }
-    public static void addToAllTime(long allTime) {
+    public static synchronized void addToAllTime(long allTime) {
         Player.allTime += allTime;
     }
 

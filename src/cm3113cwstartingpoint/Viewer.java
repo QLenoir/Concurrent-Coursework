@@ -70,7 +70,9 @@ public class Viewer extends Thread{
         if(viewedPlayer != null){ /* will be null when Viewer first starts */
             long timeViewed = System.nanoTime() - startedViewingPlayer;
             game.add(new Updatable(viewedPlayer, timeViewed));
-            Viewer.totalViewingTimeRecordedByViewers += timeViewed;
+            synchronized(Viewer.class){
+                Viewer.totalViewingTimeRecordedByViewers += timeViewed;
+            }
             this.viewedPlayer.loseOneViewer();
             Player.addToAllTime(timeViewed);
         }        

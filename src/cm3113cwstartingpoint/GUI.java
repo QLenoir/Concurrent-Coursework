@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -22,7 +23,7 @@ public class GUI extends javax.swing.JFrame {
     private Viewer testViewer;
     private final Executor viewerPool;
     DecimalFormat round = new DecimalFormat("0.00");
-    private final static int MAX_VIEWER = 30;
+    private final static int MAX_VIEWER = 50;
     
     public GUI() {
         initComponents();
@@ -32,6 +33,7 @@ public class GUI extends javax.swing.JFrame {
         
         this.viewerPool = Executors.newFixedThreadPool(MAX_VIEWER);
         this.createClockTimer();
+        this.totalViewerstask();
         this.fillTableTask();
     }
 
@@ -84,6 +86,25 @@ public class GUI extends javax.swing.JFrame {
                         new Runnable() {
                             @Override public void run() {
                                fillTable();
+                            }}); // this is thread-safe as sets clock via the EDT
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0,100);
+    }
+    
+    private void totalViewerstask() {
+        java.util.Timer timer = new java.util.Timer(true); // the Timer
+        java.util.TimerTask task = new java.util.TimerTask(){ // the Task
+            @Override public void run(){
+                int sum = 0;
+                for (Player player : game.getPlayers()) {
+                    sum += player.getNumViewers();
+                }
+                String total = String.valueOf(sum);
+                java.awt.EventQueue.invokeLater(
+                        new Runnable() {
+                            @Override public void run() {
+                               textFieldNumberViewers.setText(total);
                             }}); // this is thread-safe as sets clock via the EDT
             }
         };

@@ -90,6 +90,11 @@ public class Game {
         synchronized(this){
             totalDonationsRecordedByGame += donation.getAmount();
             donations.add(donation);
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    gui.addToDonationHistory(donation);
+                }
+            });
             donation.getPlayer().addDonation(donation);
         }
     }
