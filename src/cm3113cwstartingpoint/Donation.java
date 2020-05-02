@@ -29,7 +29,7 @@ public class Donation {
 
     @Override
     public String toString() {
-        return "Donation of " + amount + " from " + viewer + " to " + player;
+        return "Donation of " + amount + " from " + viewer + " to " + player.getPlayerName();
     }
         
 }

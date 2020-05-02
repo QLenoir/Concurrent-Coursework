@@ -18,7 +18,7 @@ public class UpdateConsumer extends Thread {
     }
     
     @Override public void run(){
-        while(game.isRunning()){
+        while(game.isRunning() || game.getQueueLength() != 0){
             if(game.getQueueLength()== 0) continue;
             Updatable u = game.remove();
             if(u.isDonation()){

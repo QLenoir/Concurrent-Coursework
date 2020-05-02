@@ -90,13 +90,13 @@ public class Game {
         synchronized(this){
             totalDonationsRecordedByGame += donation.getAmount();
             donations.add(donation);
-            java.awt.EventQueue.invokeLater(new Runnable() {
+        }
+        java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
                     gui.addToDonationHistory(donation.toString());
                 }
             });
-            donation.getPlayer().addDonation(donation);
-        }
+        donation.getPlayer().addDonation(donation);
     }
     
     /* processes a record of time spent viewing a Player that comes from a Viewer */
@@ -280,4 +280,15 @@ public class Game {
     public GUI getGui(){
         return this.gui;
     }
+    
+    public String getSummaryOfDonations(){
+        double totalOfDonations = 0;
+            for(Donation d: donations){
+                totalOfDonations += d.getAmount();
+            }
+            return "There was " 
+                    + donations.size() + " donations for a total amount of " 
+                    + round.format(totalOfDonations) + "£\n";
+    }
+
 }

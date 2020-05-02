@@ -654,9 +654,11 @@ public class GUI extends javax.swing.JFrame {
         game.stopGame();
         this.buttonStartOneViewer.setEnabled(false);
         this.buttonStartViewers.setEnabled(false);
+        String result = game.getSummaryOfDonations();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 addToDonationHistory("Game stopped at :" + textFieldTime.getText());
+                addToDonationHistory(result);
             }
         });
         System.out.println("Game stopped. Number of viewers should reduce to 0");

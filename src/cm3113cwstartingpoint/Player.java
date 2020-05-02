@@ -64,7 +64,7 @@ public class Player{
     /* method to get total of all donations in Players record of donations */
     public double sumDonations(){
         synchronized(this){
-            int sum = 0;
+            double sum = 0;
             for(Double v: donationsFromViewers.values()){
                 sum += v;
             }
