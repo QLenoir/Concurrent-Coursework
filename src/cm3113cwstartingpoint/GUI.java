@@ -140,8 +140,8 @@ public class GUI extends javax.swing.JFrame {
         ));
     }
 
-    public void addToDonationHistory(Donation donation) {
-        this.textAreaDonationHistory.append("\n" + donation.toString());
+    public void addToDonationHistory(String s) {
+        this.textAreaDonationHistory.append("\n" + s);
     }
 
     public void updateViewerNumber() {
@@ -642,12 +642,23 @@ public class GUI extends javax.swing.JFrame {
         this.startGameTimer();
         UpdateConsumer update = new UpdateConsumer(game);
         this.viewerPool.execute(update);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                addToDonationHistory("Game started at :" + textFieldTime.getText());
+            }
+        });
+       
     }//GEN-LAST:event_buttonStartGameActionPerformed
 
     private void buttonStopGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStopGameActionPerformed
         game.stopGame();
         this.buttonStartOneViewer.setEnabled(false);
         this.buttonStartViewers.setEnabled(false);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                addToDonationHistory("Game stopped at :" + textFieldTime.getText());
+            }
+        });
         System.out.println("Game stopped. Number of viewers should reduce to 0");
     }//GEN-LAST:event_buttonStopGameActionPerformed
 

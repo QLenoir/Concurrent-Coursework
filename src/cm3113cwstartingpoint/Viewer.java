@@ -1,5 +1,6 @@
 package cm3113cwstartingpoint;
 
+import com.sun.webkit.plugin.Plugin;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -80,6 +81,11 @@ public class Viewer extends Thread{
         if(viewedPlayer != null){ /* will be null here if Viewer is finished viewing */
             this.viewedPlayer.gainOneViewer();
             this.startedViewingPlayer = System.nanoTime();
+            java.awt.EventQueue.invokeLater(new Runnable() {
+                public void run() {
+                    game.getGui().addToDonationHistory(this +" went to " + viewedPlayer.getPlayerName() + "'s stream");
+                }
+            });
         }    
     }
     

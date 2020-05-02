@@ -92,7 +92,7 @@ public class Game {
             donations.add(donation);
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    gui.addToDonationHistory(donation);
+                    gui.addToDonationHistory(donation.toString());
                 }
             });
             donation.getPlayer().addDonation(donation);
@@ -277,5 +277,7 @@ public class Game {
         return this.numUpdates;
     }
     
-    
+    public GUI getGui(){
+        return this.gui;
+    }
 }
