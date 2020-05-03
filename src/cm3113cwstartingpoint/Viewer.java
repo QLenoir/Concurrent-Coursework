@@ -83,7 +83,9 @@ public class Viewer extends Thread{
             this.startedViewingPlayer = System.nanoTime();
             java.awt.EventQueue.invokeLater(new Runnable() {
                 public void run() {
-                    game.getGui().addToDonationHistory(this +" went to " + viewedPlayer.getPlayerName() + "'s stream");
+                    try{
+                        game.getGui().addToDonationHistory(this +" went to " + viewedPlayer.getPlayerName() + "'s stream");
+                    }catch(NullPointerException e){};     
                 }
             });
         }    
