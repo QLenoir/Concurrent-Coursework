@@ -3,8 +3,6 @@ package cm3113cwstartingpoint;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
@@ -92,6 +90,7 @@ public class Game {
             donations.add(donation);
         }
         java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     gui.addToDonationHistory(donation.toString());
                 }
@@ -186,17 +185,25 @@ public class Game {
      * total of times sent by Viewers should all agree if all data is processed safely
     */
     public void countTimes(){
-        String timeResults = "";
-        long sumOfPlayerTotalTimes = 0;
-        for(Player p: times.keySet()){
-            long totalTimeForPlayer = 0;
-            for(Long time: times.get(p)){
-                totalTimeForPlayer += time;
-                sumOfPlayerTotalTimes += time;
-            }
-            timeResults += p + " and had " + totalTimeForPlayer/1000000 + "ms of views" +"\n";           
-        }
+
+        String timeResults;
+        long sumOfPlayerTotalTimes;
+        PlayerCount c1 = new PlayerCount(players.get(0),times);
+        PlayerCount c2 = new PlayerCount(players.get(1),times);
+        PlayerCount c3 = new PlayerCount(players.get(2),times);
+        PlayerCount c4 = new PlayerCount(players.get(3),times);
+        c1.start();c2.start();c3.start();c4.start();
         
+        try { // synchronise on termination of workers
+            c1.join() ;
+            c2.join() ;
+            c3.join();
+            c4.join();
+        } catch(InterruptedException e) { }
+        
+        timeResults = c1.getimeResults() + c2.getimeResults() + c2.getimeResults() + c3.getimeResults()+ c4.getimeResults();
+        sumOfPlayerTotalTimes = c1.getTotalTimeForPlayer()+c2.getTotalTimeForPlayer()+c3.getTotalTimeForPlayer()+c4.getTotalTimeForPlayer();
+ 
         timeResults += "\n Total viewing times recorded by Players: " 
                 + sumOfPlayerTotalTimes/1000000 + "ms \n" +
             "Total viewing times recorded by Game:    " 
@@ -219,7 +226,7 @@ public class Game {
      * total of donations sent by Viewers should all agree if all data is processed safely
     */
     public void checkDonations(){
-        String report = "";
+        String report;
         /* Donations counted by the Game class */
         double totalOfDonations = 0;
         for(Donation d: donations){

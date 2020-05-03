@@ -643,6 +643,7 @@ public class GUI extends javax.swing.JFrame {
         UpdateConsumer update = new UpdateConsumer(game);
         this.viewerPool.execute(update);
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 addToDonationHistory("Game started at :" + textFieldTime.getText());
             }
@@ -656,6 +657,7 @@ public class GUI extends javax.swing.JFrame {
         this.buttonStartViewers.setEnabled(false);
         String result = game.getSummaryOfDonations();
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 addToDonationHistory("Game stopped at :" + textFieldTime.getText());
                 addToDonationHistory(result);
@@ -716,6 +718,7 @@ public class GUI extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new GUI().setVisible(true);
             }
