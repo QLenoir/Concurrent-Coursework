@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cm3113cwstartingpoint;
 
 import java.util.ArrayList;
@@ -27,9 +22,9 @@ public class PlayerCount extends Thread{
     @Override
     public void run(){
         
-            for(Long time: times.get(p)){
-                this.totalTimeForPlayer += time;
-            }
+        times.get(p).forEach((time) -> {
+            this.totalTimeForPlayer += time;
+        });
             this.timeResults = p + " and had " + this.totalTimeForPlayer/1000000 + "ms of views" +"\n";     
     }
     
