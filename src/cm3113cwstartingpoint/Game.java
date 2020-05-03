@@ -18,28 +18,28 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class Game {
     /* Collections stored within Game object */
-    private List<Player> players;
-    private List<Viewer> viewers;
-    private List<Donation> donations;
-    private ConcurrentHashMap<Player,ArrayList<Long>> times;
+    private final List<Player> players;
+    private final List<Viewer> viewers;
+    private final List<Donation> donations;
+    private final ConcurrentHashMap<Player,ArrayList<Long>> times;
     DecimalFormat round = new DecimalFormat("0.00");
     
     /* Properties of the Game */
-    private String name;
+    private final String name;
     private boolean running;
     private double totalDonationsRecordedByGame;
     private long totalViewingTimeRecordedByGame;
     private int totalNumberViewing;
     
-    private Random random;
-    private GUI gui;
+    private final Random random;
+    private final GUI gui;
     
     /* Update queue */
-    private Lock lock ; // monitor entry lock
-    private Condition bufferNotEmpty ; // condition variables
-    private Condition bufferNotFull ;
+    private final Lock lock ; // monitor entry lock
+    private final Condition bufferNotEmpty ; // condition variables
+    private final Condition bufferNotFull ;
     // shared data that Monitor protects
-    private Updatable[] buffer ;
+    private final Updatable[] buffer ;
     private int bufferSize, in, out, numUpdates ;
     private final static int QUEUE_SIZE = 50;
     
@@ -203,8 +203,15 @@ public class Game {
                 + totalViewingTimeRecordedByGame/1000000 + "ms\n" +
             "Total viewing times recorded by Viewers: " 
                 + Viewer.getTimeViewers()/1000000 + "ms\n";
+        final String results = timeResults;
         System.out.println(timeResults);
-        gui.updateReport(timeResults);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                gui.updateReport(results);
+            }
+        });
+        
     }
     
     /* Method that checks for consistency of donations 
@@ -238,8 +245,15 @@ public class Game {
                 + Viewer.getTotalNumberOfDonations() + " Value = " 
                 + round.format(Viewer.getTotalValueOfDonations())+ "\n\n"; 
         
+        final String finalReport = report;
         System.out.println(report);
-        gui.updateReport(report);
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                gui.updateReport(finalReport);
+            }
+        });
+        
     }
     
     public void add(Updatable u) {
