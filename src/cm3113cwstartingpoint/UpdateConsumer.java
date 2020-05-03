@@ -11,7 +11,7 @@ package cm3113cwstartingpoint;
  */
 public class UpdateConsumer extends Thread {
     
-    private Game game;
+    private final Game game;
     
     public UpdateConsumer(Game game){    
         this.game = game;

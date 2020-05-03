@@ -1,6 +1,5 @@
 package cm3113cwstartingpoint;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -65,9 +64,7 @@ public class Player{
     public double sumDonations(){
         synchronized(this){
             double sum = 0;
-            for(Double v: donationsFromViewers.values()){
-                sum += v;
-            }
+            sum = donationsFromViewers.values().stream().map((v) -> v).reduce(sum, (accumulator, _item) -> accumulator + _item);
             return sum;
         }
     }

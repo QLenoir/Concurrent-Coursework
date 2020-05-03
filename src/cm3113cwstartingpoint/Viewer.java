@@ -1,6 +1,6 @@
 package cm3113cwstartingpoint;
 
-import com.sun.webkit.plugin.Plugin;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -82,6 +82,7 @@ public class Viewer extends Thread{
             this.viewedPlayer.gainOneViewer();
             this.startedViewingPlayer = System.nanoTime();
             java.awt.EventQueue.invokeLater(new Runnable() {
+                @Override
                 public void run() {
                     try{
                         game.getGui().addToDonationHistory(this +" went to " + viewedPlayer.getPlayerName() + "'s stream");
@@ -110,7 +111,7 @@ public class Viewer extends Thread{
     }   
     public static double getTotalValueOfDonations(){
         double total = 0;
-        for(Donation donation: donationsMade) total += donation.getAmount();
+        total = donationsMade.stream().map((donation) -> donation.getAmount()).reduce(total, (accumulator, _item) -> accumulator + _item);
         return total;
     }
     

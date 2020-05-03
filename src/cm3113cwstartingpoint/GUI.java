@@ -5,7 +5,6 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -97,9 +96,7 @@ public class GUI extends javax.swing.JFrame {
         java.util.TimerTask task = new java.util.TimerTask(){ // the Task
             @Override public void run(){
                 int sum = 0;
-                for (Player player : game.getPlayers()) {
-                    sum += player.getNumViewers();
-                }
+                sum = game.getPlayers().stream().map((player) -> player.getNumViewers()).reduce(sum, Integer::sum);
                 String total = String.valueOf(sum);
                 java.awt.EventQueue.invokeLater(
                         new Runnable() {
@@ -600,7 +597,6 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonStartOneViewerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonStartOneViewerActionPerformed
-        int numViewerActions = (Integer) this.spinnerViewerActions.getValue();
         int viewerActionInterval = (Integer) this.spinnerViewerRate.getValue();
         testViewer = new Viewer("Test" , game, 1, viewerActionInterval);
         this.buttonMakeDonation.setEnabled(true);

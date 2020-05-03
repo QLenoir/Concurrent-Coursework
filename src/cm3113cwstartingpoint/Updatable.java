@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cm3113cwstartingpoint;
 
 /**
@@ -13,7 +8,7 @@ public class Updatable {
     
     private final Donation donation;
     private final long timeViewed;
-    private Player player;
+    private final Player player;
     
     public Updatable(Donation donation){
         this.donation = donation;
