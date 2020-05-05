@@ -62,7 +62,7 @@ public class Viewer extends Thread{
     /* method to process a donation for a Player */
     public void donate(double amount){
         Donation donation = new Donation(this, viewedPlayer, amount);
-        this.game.add(new Updatable(donation));
+        this.game.add(new Updatable(donation)); //Add the updatable data to the process queue
         Viewer.donationsMade.add(donation);
     }
     
@@ -70,7 +70,7 @@ public class Viewer extends Thread{
     public void switchPlayer(Player newPlayerToWatch){
         if(viewedPlayer != null){ /* will be null when Viewer first starts */
             long timeViewed = System.nanoTime() - startedViewingPlayer;
-            game.add(new Updatable(viewedPlayer, timeViewed));
+            game.add(new Updatable(viewedPlayer, timeViewed)); //Add the updatable data to the process queue
             synchronized(Viewer.class){
                 Viewer.totalViewingTimeRecordedByViewers += timeViewed;
             }
@@ -85,7 +85,7 @@ public class Viewer extends Thread{
                 @Override
                 public void run() {
                     try{
-                        game.getGui().addToDonationHistory(this +" went to " + viewedPlayer.getPlayerName() + "'s stream");
+                        game.getGui().addToDonationHistory(this +" went to " + viewedPlayer.getPlayerName() + "'s stream");//Update the donation hisotry with the new player that is being watched
                     }catch(NullPointerException e){};     
                 }
             });

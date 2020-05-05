@@ -1,4 +1,4 @@
-package cm3113cwstartingpoint;
+package uk.ac.rgu.cousework;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -185,14 +185,13 @@ public class Game {
      * total of times sent by Viewers should all agree if all data is processed safely
     */
     public void countTimes(){
-
-        String timeResults;
         long sumOfPlayerTotalTimes;
-        PlayerCount c1 = new PlayerCount(players.get(0),times);
+        String timeResults;
+        PlayerCount c1 = new PlayerCount(players.get(0),times); // Create a thread for every player
         PlayerCount c2 = new PlayerCount(players.get(1),times);
         PlayerCount c3 = new PlayerCount(players.get(2),times);
         PlayerCount c4 = new PlayerCount(players.get(3),times);
-        c1.start();c2.start();c3.start();c4.start();
+        c1.start();c2.start();c3.start();c4.start(); //Start all threads
         
         try { // synchronise on termination of workers
             c1.join() ;
@@ -201,6 +200,7 @@ public class Game {
             c4.join();
         } catch(InterruptedException e) { }
         
+        //Retrieve results
         timeResults = c1.getimeResults() + c2.getimeResults() + c2.getimeResults() + c3.getimeResults()+ c4.getimeResults();
         sumOfPlayerTotalTimes = c1.getTotalTimeForPlayer()+c2.getTotalTimeForPlayer()+c3.getTotalTimeForPlayer()+c4.getTotalTimeForPlayer();
  
@@ -263,6 +263,10 @@ public class Game {
         
     }
     
+    /**
+     * This method add a new data to be processed to the queue
+     * @param u Updatable data to process
+     */
     public void add(Updatable u) {
         try {
             lock.lock() ;
@@ -278,6 +282,10 @@ public class Game {
         }
     }
 
+    /**
+     * This method removes a data that has been processed from the queue
+     * @return Updatable data that has been processed
+     */
     public Updatable remove() {
         try {
             lock.lock() ;
@@ -294,6 +302,10 @@ public class Game {
         }
     }
     
+    /**
+     * Method that returns the queue length of data that needs to be processed
+     * @return an int of the queue length
+     */
     public synchronized int getQueueLength(){
         return this.numUpdates;
     }
@@ -302,6 +314,10 @@ public class Game {
         return this.gui;
     }
     
+    /**
+     * Method to get a summary of donations 
+     * @return a String containing the summary
+     */
     public String getSummaryOfDonations(){
         double totalOfDonations = 0;
             for(Donation d: donations){
@@ -311,5 +327,4 @@ public class Game {
                     + donations.size() + " donations for a total amount of " 
                     + round.format(totalOfDonations) + "£\n";
     }
-
 }

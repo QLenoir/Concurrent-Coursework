@@ -27,15 +27,19 @@ public class GUI extends javax.swing.JFrame {
     public GUI() {
         initComponents();
 
-        this.game = new Game(this, "Test Game");
+        this.game = new Game(this,"");
         this.jComboBox1.setModel(new DefaultComboBoxModel(game.getPlayersNames().toArray()));
         
-        this.viewerPool = Executors.newFixedThreadPool(MAX_VIEWER);
-        this.createClockTimer();
-        this.totalViewerstask();
-        this.fillTableTask();
+        
+        this.viewerPool = Executors.newFixedThreadPool(MAX_VIEWER); //Creates the thread pool
+        this.createClockTimer(); //Instanciate the timer that displays the curent time
+        this.totalViewerstask(); //Instanciate the timer that retrieves the total number of viewers
+        this.fillTableTask(); //Instance the timer that update the table every 1/10th of a second
     }
 
+    /**
+     * Method to create a timer that displays the current time of the system
+     */
     private void createClockTimer() {
         java.util.Timer timer = new java.util.Timer(true); // the Timer
         java.util.TimerTask task = new java.util.TimerTask(){ // the Task
@@ -51,6 +55,9 @@ public class GUI extends javax.swing.JFrame {
         timer.scheduleAtFixedRate(task, 0,1000);
     }
     
+    /**
+     * Method to create a timer that display the time since the game is running
+     */
     private void startGameTimer() {
         java.util.Timer timer = new java.util.Timer(true); // the Timer
         long start = System.currentTimeMillis();
@@ -71,11 +78,18 @@ public class GUI extends javax.swing.JFrame {
         };
         timer.scheduleAtFixedRate(task, 0,1000);    }
 
+    /**
+     * Retrieve current time of System
+     * @return A String with the date and time of System
+     */
     public String getTime() {
         LocalDateTime now = LocalDateTime.now();
         return now.format(DateTimeFormatter.ofPattern("HH:mm:ss"));
     }
     
+    /**
+     * Method that creates a timer to update the information table every 1/10th of a second
+     */
     private void fillTableTask() {
         java.util.Timer timer = new java.util.Timer(true); // the Timer
         java.util.TimerTask task = new java.util.TimerTask(){ // the Task
@@ -91,6 +105,9 @@ public class GUI extends javax.swing.JFrame {
         timer.scheduleAtFixedRate(task, 0,100);
     }
     
+    /**
+     * Method that creates a timer to update the number of viewers every 1/10th of a second
+     */
     private void totalViewerstask() {
         java.util.Timer timer = new java.util.Timer(true); // the Timer
         java.util.TimerTask task = new java.util.TimerTask(){ // the Task
@@ -627,7 +644,7 @@ public class GUI extends javax.swing.JFrame {
                 int numViewerActions = (Integer) this.spinnerViewerActions.getValue();
                 v = new Viewer("V" + i, game, numViewerActions, viewerActionInterval);
             }           
-            viewerPool.execute(v);
+            viewerPool.execute(v); //Adds new viewer to thread pool
         }
     }//GEN-LAST:event_buttonStartViewersActionPerformed
 
@@ -663,6 +680,12 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonStopGameActionPerformed
 
     private void buttonProcessResultsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonProcessResultsActionPerformed
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                textAreaResults.append("Summary of game " + textFieldGameName.getText() +" :\n");
+            }
+        });
         game.countTimes();
         game.checkDonations();
     }//GEN-LAST:event_buttonProcessResultsActionPerformed
