@@ -22,7 +22,7 @@ public class GUI extends javax.swing.JFrame {
     private Viewer testViewer;
     private final Executor viewerPool;
     DecimalFormat round = new DecimalFormat("0.00");
-    private final static int MAX_VIEWER = 50;
+    private final static int MAX_VIEWER = 50; //Max number of viewver threads to handle
     
     public GUI() {
         initComponents();
@@ -654,7 +654,7 @@ public class GUI extends javax.swing.JFrame {
         this.buttonStartViewers.setEnabled(true);
         this.startGameTimer();
         UpdateConsumer update = new UpdateConsumer(game);
-        this.viewerPool.execute(update);
+        update.start();
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
